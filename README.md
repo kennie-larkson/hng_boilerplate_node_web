@@ -1,5 +1,18 @@
 # [App Name] Integration Documentation
 
+  <p align="center">
+    <br />
+    <a href="https://drawsql.app/teams/mercadotop/diagrams/hng11-aphka"><strong>Database Schema Design 🔗</strong></a>
+    <br />
+    <br />
+    <a href="https://app.swaggerhub.com/apis/kennieapis/TEAM-APHKA-HNG11/1.0.0">Endpoints Docummentation 🔗</a>
+  </p>
+</div>
+
+<br />
+<br />
+
+
 ## Overview
 
 [Description]
@@ -254,3 +267,9 @@ All API endpoints can be referenced in the [API Reference](API_REFERENCE.md) doc
 ## Versioning
 
 This project is versioned to ensure backward compatibility and easy maintenance. The current version is [version].
+
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
