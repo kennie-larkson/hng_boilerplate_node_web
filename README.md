@@ -268,8 +268,7 @@ All API endpoints can be referenced in the [API Reference](API_REFERENCE.md) doc
 
 This project is versioned to ensure backward compatibility and easy maintenance. The current version is [version].
 
+
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
