@@ -1,5 +1,18 @@
 # [App Name] Integration Documentation
 
+  <p align="center">
+    <br />
+    <a href="https://drawsql.app/teams/mercadotop/diagrams/hng11-aphka"><strong>Database Schema Design 🔗</strong></a>
+    <br />
+    <br />
+    <a href="https://app.swaggerhub.com/apis/kennieapis/TEAM-APHKA-HNG11/1.0.0">Endpoints Docummentation 🔗</a>
+  </p>
+</div>
+
+<br />
+<br />
+
+
 ## Overview
 
 [Description]
