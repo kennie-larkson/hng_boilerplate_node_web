@@ -1,0 +1,778 @@
+openapi: 3.0.0
+info:
+  title: TEAM APHKA OpenAPI Design Document
+  version: 1.0.0
+  description: API for user registration and authentication.
+servers:
+  - url: "http://localhost:7000/api"
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        statusCode:
+                          type: number
+                          example: 422
+                        message:
+                          type: string
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthLoginResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+
+        "401":
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 401
+                  message:
+                    type: string
+
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        statusCode:
+                          type: number
+                          example: 422
+                        message:
+                          type: string
+
+  /auth/forgot-password:
+    summary: User forgot their password
+    description: Send an email to the user to reset their password
+    post:
+      tags:
+        - Authentication
+      summary: "User receives an email to reset their password"
+      requestBody:
+        description: Forgot password payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@example.com
+              required:
+                - email
+
+      responses:
+        "200":
+          description: Email successfully sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200ß
+                  message:
+                    type: string
+                    example: Email successfully sent
+
+        "400":
+          description: Invalid email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid input
+                  statusCode:
+                    type: number
+                    example: 400
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: "Unable to send the email"
+
+  /auth/reset-password:
+    summary: User resets their password
+    description: User sets a new password
+    patch:
+      tags:
+        - Authentication
+      summary: "User resets their password"
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Reset password payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+                  example: John12345_678
+              required:
+                - new_password
+
+      responses:
+        "200":
+          description: Password successfully changed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Password successfully changed
+
+        "400":
+          description: Invalid password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid password
+
+        "401":
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 401
+                  message:
+                    type: string
+                    example: Invalid token
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: "Unable to send the email"
+
+  /api/organisations:
+    post:
+      tags:
+        - Organisation
+      summary: Create a new organization
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the organization
+                  example: "John's Organization"
+                  required: true
+                description:
+                  type: string
+                  description: The description of the organization
+                  required: false
+                email:
+                  type: string
+                  required: true
+      responses:
+        "201":
+          description: Organization created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 201
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      email:
+                        type: string
+
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+
+        "401":
+          description: Unauthorized - Invalid or expired token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 401
+                  message:
+                    type: string
+
+  /api/organisations/{id}:
+    get:
+      tags:
+        - Organisation
+      summary: "Gets an organisation by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: f45ffab2-ec0c-4c1a-acdb-3baeeb691f0c
+      responses:
+        "200":
+          description: Organisation retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: User retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: f45ffab2-ec0c-4c1a-acdb-3baeeb691f0c
+                      name:
+                        type: string
+                        example: John's Organisation
+                      email:
+                        type: string
+                        format: email
+                        example: john@exmaple.org
+                      description:
+                        type: string
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 401
+                  message:
+                    type: string
+                    example: Unauthorized access
+
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 403
+                  message:
+                    type: string
+                    example: Forbidden access
+
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid organisation id
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: "Unable to retrieve organisation"
+
+  /api/users/{id}:
+    summary: User info
+    description: Gets a user by ID
+    get:
+      tags:
+        - User
+      summary: "Gets a user by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: f45ffab2-ec0c-4c1a-acdb-3baeeb691f0c
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: User retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: f45ffab2-ec0c-4c1a-acdb-3baeeb691f0c
+                      name:
+                        type: string
+                        example: John Doe
+                      email:
+                        type: string
+                        format: email
+                        example: john@example.com
+
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 401
+                  message:
+                    type: string
+                    example: Unauthorized access
+
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 403
+                  message:
+                    type: string
+                    example: Forbidden access
+
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid user id
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 500
+                  message:
+                    type: string
+                    example: "Unable to retrieve user"
+
+  /api/payments:
+    post:
+      tags:
+        - Payments
+      summary: Process a payment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Payment"
+      responses:
+        "200":
+          description: Payment processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+
+  /api/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get user notifications
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Notifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+        "401":
+          description: Unauthorized - Invalid or expired token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 401
+                  message:
+                    type: string
+
+  /api/messages:
+    post:
+      tags:
+        - Messages
+      summary: Send a message
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Message"
+      responses:
+        "200":
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: number
+                    example: 400
+                  message:
+                    type: string
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 201
+        message:
+          type: string
+          example: User registration successful
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: f45ffab2-ec0c-4c1a-acdb-3baeeb691f0c
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                is_verified:
+                  type: boolean
+
+    AuthLoginResponse:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 200
+        message:
+          type: string
+          example: User login successful
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: f45ffab2-ec0c-4c1a-acdb-3baeeb691f0c
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                is_verified:
+                  type: boolean
+    Organisation:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    Payment:
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+        paymentMethod:
+          type: string
+    PaymentResponse:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 200
+        id:
+          type: string
+        amount:
+          type: float
+        status:
+          type: string
+        currency:
+          type: string
+        symbol:
+          type: string
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        message:
+          type: string
+        is_read:
+          type: boolean
+    Message:
+      type: object
+      properties:
+        recipientId:
+          type: string
+        content:
+          type: string
+    MessageResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        id:
+          type: string
+        body:
+          type: string
+        subject:
+          type: string
+securitySchemes:
+  bearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
